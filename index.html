@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>匿名チャット</title>
+    <style>
+        body { background: black; color: lime; font-family: monospace; }
+        #messages { height: 300px; overflow-y: scroll; border: 1px solid lime; padding: 10px; }
+        input { background: black; color: lime; border: 1px solid lime; }
+    </style>
+</head>
+<body>
+    <h1>匿名チャット</h1>
+    <div id="messages"></div>
+    <form id="form">
+        <input id="input" autocomplete="off" placeholder="メッセージを入力" />
+        <button>送信</button>
+    </form>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const form = document.getElementById('form');
+        const input = document.getElementById('input');
+        const messages = document.getElementById('messages');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (input.value) {
+                socket.emit('chat message', input.value);
+                input.value = '';
+            }
+        });
+
+        socket.on('chat message', function(msg) {
+            const item = document.createElement('div');
+            item.textContent = msg;
+            messages.appendChild(item);
+            messages.scrollTop = messages.scrollHeight;
+        });
+    </script>
+</body>
+</html>
